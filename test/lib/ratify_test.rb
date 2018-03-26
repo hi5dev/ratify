@@ -10,10 +10,15 @@ class RatifyTest < Minitest::Test
   def test_class_methods
     assert_respond_to Perm, :permissions
     assert_respond_to Perm, :permit
-    assert_respond_to Perm, :permitted?
+    assert_respond_to Perm, :permits?
   end
 
   def test_permissions_on_object
-    assert Perm.permitted?('this')
+    assert Perm.permits?('this')
+  end
+
+  def test_permission_in_instance
+    perm = Perm.new
+
   end
 end

@@ -7,7 +7,7 @@ class Permission
     @conditions = conditions
   end
 
-  def permitted?(object, *actions)
+  def permits?(object, *actions)
     object_matches?(object) &&
     action_matches?(actions) &&
     conditions_match?(object, actions)

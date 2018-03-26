@@ -11,8 +11,8 @@ module Ratify
       permissions << Permission.new(object, *actions, **conditions)
     end
 
-    def permitted?(object, *actions)
-      permissions.any? {|permission| permission.permitted?(object, *actions) }
+    def permits?(object, *actions)
+      permissions.any? {|permission| permission.permits?(object, *actions) }
     end
   end
 
