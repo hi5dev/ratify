@@ -39,7 +39,7 @@ class Record
   include Ratify
  
   # Admins have full access to the records.
-  permit User, :full_access, if: :admin?
+  permit User, :create, :update, if: :admin?
   
   # Users can create new records.
   permit User, :create
