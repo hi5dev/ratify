@@ -60,19 +60,5 @@ module Ratify
       refute permission.permits?(14)
       assert permission.permits?(16)
     end
-
-    def test_condition_as_symbol
-      permission = Permission.new Array, unless: :empty?
-
-      assert permission.permits?(['not empty'])
-      refute permission.permits?([])
-    end
-
-    def test_equality_condition
-      permission = Permission.new(Numeric, round: 10)
-
-      refute permission.permits?(10.8)
-      assert permission.permits?(10.1)
-    end
   end
 end
