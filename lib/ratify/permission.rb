@@ -7,10 +7,10 @@ class Permission
     @conditions = conditions
   end
 
-  def permits?(object, *actions, instance: nil)
+  def permits?(object, *actions, scope: nil)
     object_matches?(object) &&
     action_matches?(actions) &&
-    conditions_match?(object, instance, actions)
+    conditions_match?(object, scope, actions)
   end
 
   private
@@ -19,19 +19,19 @@ class Permission
     actions.all? { |action| self.actions.include?(action) }
   end
 
-  def condition_matches?(name, condition, object, instance, actions)
+  def condition_matches?(name, condition, object, scope, actions)
     match = case condition
-    when Proc then instance.instance_exec(object, *actions, &condition)
-    when Symbol then instance.send(condition)
-    else instance.send(name) == condition
+    when Proc then scope.instance_exec(object, *actions, &condition)
+    when Symbol then scope.send(condition)
+    else scope.send(name) == condition
     end
 
     name == :unless ? !match : match && true
   end
 
-  def conditions_match?(object, instance, actions)
+  def conditions_match?(object, scope, actions)
     conditions.empty? || conditions.all? do |name, condition|
-      condition_matches?(name, condition, object, instance, actions)
+      condition_matches?(name, condition, object, scope, actions)
     end
   end
 
