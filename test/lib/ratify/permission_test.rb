@@ -60,5 +60,11 @@ module Ratify
       refute permission.permits?(14)
       assert permission.permits?(16)
     end
+
+    def test_full_access
+      permission = Permission.new(String, :full_access)
+      assert permission.permits?('this')
+      assert permission.permits?('that', :anything)
+    end
   end
 end

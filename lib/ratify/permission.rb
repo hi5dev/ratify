@@ -27,6 +27,8 @@ class Permission
   # @param [Array<Symbol>] actions
   # @return [true | false] If the given actions are all in the permission.
   def action_matches?(actions)
+    self.actions.include?(:full_access) ||
+
     actions.all? { |action| self.actions.include?(action) }
   end
 

@@ -1,6 +1,52 @@
 # Ratify
 
-An easy to use, zero-dependency authorization gem.
+Ratify is a very fast, easy to use, zero-dependency Ruby authorization gem.
+Simply include the `Ratify` module in your class to give it permissions. You 
+can check the permissions on a class or instance level with the `permit?` 
+method.
+
+Ratify makes as few assumptions about your authorization stragegy as possible.
+It knows only that you have one object that needs permission to be accessed  
+by another object. You can optionally provide a list of actions and/or 
+conditions as well.
+
+Here's a very simple user-authorization example:
+
+```ruby
+class User
+  attr_accessor :admin
+end
+
+class Record
+  include Ratify
+  
+  attr_accessor :published, :user
+  
+  # Admins have full access to any record.
+  permit :User, :full_access, if: -> (user) { user.admin }
+  
+  # Users have full access to their own records.
+  permit :User, :full_access, if: -> (user) { self.user == user }
+  
+  # Signed in users can create new records.
+  permit :User, :create
+  
+  # Signed out users can read published records.
+  permit nil, :read, if: :published
+end
+```
+
+The permissions can be read at a class-level:
+
+```ruby
+Record.permit?(current_user, :create)
+```
+
+or on an instance-level:
+
+```ruby
+record.permit?(current_user, :update)
+```
 
 ## Installation
 
@@ -17,56 +63,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install ratify
-
-## Usage
-
-Here's an example of how you can use Ratify for basic user permissions.
-
-```ruby
-class User
-  attr_accessor :admin
-
-  def initialize(admin: false)
-    @admin = admin
-  end
-  
-  def admin?
-    admin && true  
-  end
-end
-
-class Record
-  include Ratify
- 
-  # Admins have full access to the records.
-  permit User, :create, :update, if: :admin?
-  
-  # Users can create new records.
-  permit User, :create
-  
-  # Users can update and destroy their own records.
-  permit User, :update, :destroy, if: -> (user) { self.user == user }
-
-  attr_accessor :user
-
-  def initialize(user)
-    @user = user  
-  end
-end
-
-admin = User.new(admin: true)
-user1 = User.new
-user2 = User.new
-record = Record.new(user: user1)
-
-record.permits?(admin, :create) # => true
-record.permits?(user1, :update) # => true
-record.permits?(user2, :destroy) # => false
-
-Record.permits?(admin, :create) # => true
-Record.permits?(user1, :create) # => true
-Record.permits?(user2, :create) # => true
-```
 
 ## Development
 
