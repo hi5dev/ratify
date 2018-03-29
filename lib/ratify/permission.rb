@@ -62,7 +62,7 @@ class Permission
   def object_as_constant
     return unless object.is_a?(String) || object.is_a?(Symbol)
 
-    Object.const_get(object) rescue nil
+    Object.const_get(object, false) rescue nil
   end
 
   # @param [Object] object
