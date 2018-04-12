@@ -23,10 +23,17 @@ class Record
   attr_accessor :published, :user
   
   # Admins have full access to any record.
-  permit :User, :full_access, if: -> (user) { user.admin }
+  permit :User, :full_access, if: -> (user) do
+    user&.admin
+  end
   
   # Users have full access to their own records.
-  permit :User, :full_access, if: -> (user) { self.user == user }
+  permit :User, :full_access, if: -> (user) do
+    # In this context self is an instance of the record. If the permission
+    # is being checked at the class-level, self will be nil. That is why the
+    # safe-navigation operator (&.) is being used here. 
+    self&.user == user
+  end
   
   # Signed in users can create new records.
   permit :User, :create
